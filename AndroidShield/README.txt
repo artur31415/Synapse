@@ -7,7 +7,7 @@
 v1.0:
 
     [ENG-USA]
-        This library was developed to work with the android app "Android Shield Arduino".
+        This library was developed to work with the android app "Bluetooth Shield Arduino".
 
         The app features lcd screen, 5 buttons, 5 leds, 2 scrollbars and 2 progressbars.
 
@@ -17,7 +17,7 @@ v1.0:
         Look at the examples to understand how the library works.
     [PT-BR]
         Essa biblioteca foi desenvolvida para funcionar com o aplicativo android 
-        "Android Shield Arduino".
+        "Bluetooth Shield Arduino".
 
         O app possui tela lcd, 5 botões, 5 leds, 2 crollbars e 2 progressbars.
 
