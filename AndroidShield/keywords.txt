@@ -1,0 +1,54 @@
+#######################################
+# Syntax Coloring Map For AndroidShield Library
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AndroidShield	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+resetUI KEYWORD2
+detachAll   KEYWORD2
+ledWrite    KEYWORD2
+ledRead KEYWORD2
+ledToggle   KEYWORD2
+ledsWrite   KEYWORD2
+ledsReset   KEYWORD2
+buttonRead    KEYWORD2
+buttonAttach   KEYWORD2
+buttonDetach   KEYWORD2
+scrollbarRead   KEYWORD2
+scrollbarAttach   KEYWORD2
+scrollbarDetach   KEYWORD2
+progressbarRead   KEYWORD2
+progressbarWrite   KEYWORD2
+progressbarsWrite   KEYWORD2
+progressbarsReset   KEYWORD2
+BTLcdGoTo   KEYWORD2
+BTLcdPrint   KEYWORD2
+BTLcdClear   KEYWORD2
+updateLoop   KEYWORD2
+DecryptMsg   KEYWORD2
+ProtocolMsg   KEYWORD2
+isConnected   KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+######################################
+# Constants (LITERAL1)
+#######################################
+
+LCD_LINES	LITERAL1
+LCD_CHARACTERS  LITERAL1
+NUM_OF_LEDS LITERAL1
+NUM_OF_BUTTONS  LITERAL1
+NUM_OF_SCROLLBARS   LITERAL1
+NUM_OF_PROGRESSBAR  LITERAL1
+BAR_MAX_VALUE   LITERAL1
