@@ -1,0 +1,28 @@
+#######################################
+# Syntax Coloring Map For DaedalusBiceps Library
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DaedalusBiceps	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+GetActuatorValue KEYWORD2
+SetNumberOfActuators   KEYWORD2
+NewValues    KEYWORD2
+BTListen KEYWORD2
+updateLoop   KEYWORD2
+DecryptMsg   KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+######################################
+# Constants (LITERAL1)
+#######################################
