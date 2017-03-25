@@ -1,0 +1,40 @@
+#######################################
+# Syntax Coloring Map Controllium
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+Controllium	KEYWORD1
+ControlliumDevice	KEYWORD1
+ControlliumClient KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+GetDevice KEYWORD2
+AddDevice KEYWORD2
+BeginUdpServer KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+#######################################
+# Methods and Functions (KEYWORD3)
+#######################################
+
+
+
+######################################
+# Constants (LITERAL1)
+#######################################
+UDP_DEFAULT_PORT LITERAL1
+DEVICE_TYPE_BUTTON LITERAL1
+DEVICE_TYPE_LED LITERAL1
+DEVICE_TYPE_SLIDER  LITERAL1
+DEVICE_TYPE_ACCELEROMETER LITERAL1
+DEVICE_TYPE_TEXT_INPUT  LITERAL1
+DEVICE_TYPE_TEXT_OUTPUT LITERAL1
+PROTOCOL_SEPARATOR  LITERAL1
+UNDEFINED_FIELD LITERAL1
