@@ -1,6 +1,6 @@
 /*************************************************************************************************************************
     DEVELOPED BY:   ARTUR FERREIRA MOREIRA
-    DATE:           FEBRUARY, 14 OF 2017
+    DATE:           MARCH, 28 OF 2017
     EMAIL:          artur31415926@gmail.com
     WEBPAGE:        http://asgardlab.netne.net/
     INSTAGRAM:      https://www.instagram.com/artur31415/
@@ -14,12 +14,15 @@
 
 #include <Arduino.h>
 
-#define DEVICE_TYPE_BUTTON            "B"
-#define DEVICE_TYPE_LED               "L"
-#define DEVICE_TYPE_SLIDER            "S"
-#define DEVICE_TYPE_ACCELEROMETER     "A"
-#define DEVICE_TYPE_TEXT_INPUT        "T"
-#define DEVICE_TYPE_TEXT_OUTPUT       "O"
+#define DEVICE_TYPE_BUTTON            		"B"
+#define DEVICE_TYPE_LED               		"L"
+#define DEVICE_TYPE_ACCELEROMETER     		"A"
+#define DEVICE_TYPE_SEEKBAR  				"S"
+#define DEVICE_TYPE_PROGRESSBAR  			"P"
+#define DEVICE_TYPE_ACCELEROMETER 			"A"
+#define DEVICE_TYPE_LABEL 					"E"
+#define DEVICE_TYPE_GSM 					"M"
+#define DEVICE_TYPE_GPS 					"G"
 
 #define PROTOCOL_SEPARATOR            "|"
 

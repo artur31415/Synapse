@@ -112,6 +112,22 @@ ControlliumDevice * Controllium::GetDevice(int index)
   return &myDevices[index];
 }
 
+ControlliumDevice * Controllium::GetDevice(String _name)
+{
+  // ControlliumDevice* dev = new ControlliumDevice();
+  // *dev = myDevices[index];
+  int _index = GetDeviceIndexByName(_name);
+  if(_index != -1)
+  {
+	  return &myDevices[_index];
+  }
+  else
+  {
+	  return new ControlliumDevice("NULL");
+  }
+  
+}
+
 int Controllium::NumberOfDevices()
 {
   return ElementsCount;
@@ -288,7 +304,7 @@ bool Controllium::Update(int updateDelay)
   //---------------------------------------------------
   //          SEND DATA TO KNOW (AND ALIVE!) CLIENTS
   //---------------------------------------------------
-  if(ClientsCount > 0 && NumberOfDevicesByType(DEVICE_TYPE_LED) > 0)
+  if(ClientsCount > 0 && (NumberOfDevicesByType(DEVICE_TYPE_LED) > 0 || NumberOfDevicesByType(DEVICE_TYPE_LABEL) > 0 || NumberOfDevicesByType(DEVICE_TYPE_PROGRESSBAR) > 0))
   {
     char* dataString = ProtocolEncrypt();
     String strToSend(dataString);
@@ -337,9 +353,14 @@ void Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]
 
   if(data.indexOf("SCAN") >= 0)//SCAN EVENT
   {
-    LastSended = "SCAN_TRUEN";
+	String response = "SCAN_TRUEN;" + name + "N";
+    LastSended = response;
+	char* outData = new char[response.length()];
+	response.toCharArray(outData, response.length());
+	
+	
     UdpPort.beginPacket(RemoteIp, UdpPort.localPort());
-    UdpPort.write("SCAN_TRUEN");
+    UdpPort.write(outData);
     UdpPort.endPacket();
   }
   else if(data.indexOf("BEGIN") >= 0)//THIS IS A NEW CLIENT!
@@ -409,15 +430,23 @@ void Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]
 char* Controllium::ProtocolEncrypt()
 {
   int numOfLeds = NumberOfDevicesByType(DEVICE_TYPE_LED);
+  int numOfLabel = NumberOfDevicesByType(DEVICE_TYPE_LABEL);
+  int numOfProgressbar = NumberOfDevicesByType(DEVICE_TYPE_PROGRESSBAR);
+  
+  int countMax = numOfLeds + numOfLabel + numOfProgressbar;
+  
   String outStr = "[";
 
-  for(int i = 0; i < numOfLeds; ++i)
+  for(int i = 0, count = 0; i < NumberOfDevices(); ++i)
   {
-    if(GetDevice(i)->GetType().indexOf(DEVICE_TYPE_LED) >= 0)
+    if(GetDevice(i)->GetType().indexOf(DEVICE_TYPE_LED) >= 0 || GetDevice(i)->GetType().indexOf(DEVICE_TYPE_LABEL) >= 0 || GetDevice(i)->GetType().indexOf(DEVICE_TYPE_PROGRESSBAR) >= 0)
     {
       outStr += "[" +  GetDevice(i)->ToString() + "]";
-      if(i < numOfLeds - 1)
+      
+	  if(count < (countMax) - 1)
         outStr += ",";
+	  
+	  ++count;
     }
   }
   outStr += "]N";

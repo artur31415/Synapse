@@ -1,6 +1,6 @@
 /*************************************************************************************************************************
     DEVELOPED BY:   ARTUR FERREIRA MOREIRA
-    DATE:           FEBRUARY, 14 OF 2017
+    DATE:           MARCH, 28 OF 2017
     EMAIL:          artur31415926@gmail.com
     WEBPAGE:        http://asgardlab.netne.net/
     INSTAGRAM:      https://www.instagram.com/artur31415/
@@ -44,6 +44,7 @@ class Controllium
     bool HasDevice(ControlliumDevice dev);
     void SetDevice(int index, ControlliumDevice dev);
     ControlliumDevice * GetDevice(int index);
+	ControlliumDevice * GetDevice(String _name);
     int NumberOfDevices();
     int NumberOfDevicesByType(String _type);
     int GetDeviceIndexByName(String _name);

@@ -72,7 +72,10 @@ ControlliumDevice::ControlliumDevice(String _name, String _type, String _value)
 
   isValueNumber = false;
 
-  ConfigValueType(_value);
+  if(_type.indexOf(DEVICE_TYPE_LABEL) < 0)
+	ConfigValueType(_value);
+  else
+	valueStr = _value;
 }
 
 
