@@ -56,13 +56,13 @@ Then within the `setup`() function you add a device to the controllium object
 
 ```java
     ControlliumDevice gpio0("Gpio 0", DEVICE_TYPE_BUTTON, "0");//DEVICE_NAME, TYPE, INITIAL_VALUE 
-	controllium.AddDevice(gpio0);
+    controllium.AddDevice(gpio0);
 ```
 
 In the `loop`() you need to call the update function.
 It returns a Boolean, wich is true if new data was received.
 
-````java
+```java
 	controllium.Update(200);
 ```
 
