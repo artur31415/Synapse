@@ -1,7 +1,7 @@
 # AndroidShield
 
 
-[![N|Solid](http://asgardlab.netne.net/play_github.png)](https://play.google.com/store/apps/details?id=com.blackbode.sigma.bluetoothshieldsimpleio)   [![N|Solid](https://lh4.googleusercontent.com/W-Le1cqMnig1JuaAnGIZS1Tyzq7WZq7Nj2YnvEYch2e8S8FR7q3nWAFz-l1QpkOs2VRfqaIp-mQpM10=w1366-h678)](https://www.instagram.com/artur31415926/)
+[![N|Solid](http://asgardlab.netne.net/play_github.png)](https://play.google.com/store/apps/details?id=com.blackbode.sigma.bluetoothshieldsimpleio)   [![N|Solid](http://asgardlab.netne.net/github_instagram_icon.png)](https://www.instagram.com/artur31415926/)
 
 
 
