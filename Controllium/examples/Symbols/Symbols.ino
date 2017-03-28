@@ -23,7 +23,7 @@ long lastTimeUIBlink = 0;
 
 int LedAnimationCounter = 1;
 
-Controllium controllium("Symbols");
+Controllium controllium("Symbols");//Name of this device, if you have more than one connected, provide a different name to each
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                              FUNCTIONS BEGIN                                                  /////

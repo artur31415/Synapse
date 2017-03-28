@@ -23,7 +23,7 @@ long lastTimeUIBlink = 0;
 
 int LedAnimationCounter = 1;
 
-Controllium controllium("Basic Controller");//Name of this device, if you have more than one connected, provide a different name to each
+Controllium controllium("ESP_GpiosControl");//Name of this device, if you have more than one connected, provide a different name to each
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                              FUNCTIONS BEGIN                                                  /////
@@ -50,7 +50,7 @@ void setup()
 {
   Serial.begin(115200);
 
-  for(int i = 0; i < 6; ++i)
+  for(int i = 0; i < 9; ++i)
   {
     pinMode(D[i], OUTPUT);
     digitalWrite(D[i], LOW);
@@ -111,45 +111,26 @@ void setup()
 
   controllium.BeginUdpServer(UDP_DEFAULT_PORT);
 
-  ControlliumDevice switch0("SWITCH_0", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio0("Gpio 0", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio1("Gpio 1", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio2("Gpio 2", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio3("Gpio 3", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio4("Gpio 4", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio5("Gpio 5", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio6("Gpio 6", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio7("Gpio 7", DEVICE_TYPE_BUTTON, "0");
+  ControlliumDevice gpio8("Gpio 8", DEVICE_TYPE_BUTTON, "0");
 
-  ControlliumDevice led0("LED_0", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led1("LED_1", DEVICE_TYPE_LED, "0");
 
-  ControlliumDevice number0("NUMBER_0_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice number1("NUMBER_1_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice number2("NUMBER_2_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice number3("NUMBER_3_0", DEVICE_TYPE_BUTTON, "0");
-
-  ControlliumDevice letterA("LETTER_A_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice letterB("LETTER_B_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice letterC("LETTER_C_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice letterD("LETTER_D_0", DEVICE_TYPE_BUTTON, "0");
-
-  ControlliumDevice symbolLight("SYMBOL_LIGHT_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice symbolOk("SYMBOL_OK_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice symbolClose("SYMBOL_CLOSE_0", DEVICE_TYPE_BUTTON, "0");
-  ControlliumDevice symbolConfig("SYMBOL_CONFIG_0", DEVICE_TYPE_BUTTON, "0");
-
-  controllium.AddDevice(switch0);
-
-  controllium.AddDevice(led0);
-  controllium.AddDevice(led1);
-
-  controllium.AddDevice(number0);
-  controllium.AddDevice(number1);
-  controllium.AddDevice(number2);
-  controllium.AddDevice(number3);
-
-  controllium.AddDevice(letterA);
-  controllium.AddDevice(letterB);
-  controllium.AddDevice(letterC);
-  controllium.AddDevice(letterD);
-
-  controllium.AddDevice(symbolLight);
-  controllium.AddDevice(symbolOk);
-  controllium.AddDevice(symbolClose);
-  controllium.AddDevice(symbolConfig);
+  controllium.AddDevice(gpio0);
+  controllium.AddDevice(gpio1);
+  controllium.AddDevice(gpio2);
+  controllium.AddDevice(gpio3);
+  controllium.AddDevice(gpio4);
+  controllium.AddDevice(gpio5);
+  controllium.AddDevice(gpio6);
+  controllium.AddDevice(gpio7);
+  controllium.AddDevice(gpio8);
 }
 
 void loop()
@@ -158,8 +139,8 @@ void loop()
   {
     lastTime = millis();
 
-    digitalWrite(D[5], LOW);
-    blink(D[5]);
+    
+    //blink(D[5]);
 
     Serial.print("ClientsCount = ");
     Serial.print(controllium.NumberOfClients());
@@ -181,7 +162,7 @@ void loop()
 
   }
 
-  if(controllium.Update(200))
+  if(controllium.Update(200))//RETURNS TRUE IF A NEW MSG WAS RECEIVED
   {
     Serial.print("DeviceCount = ");
     Serial.println(controllium.NumberOfDevices());
@@ -195,31 +176,18 @@ void loop()
       Serial.print("\t\tValue = ");
       Serial.println(controllium.GetDevice(i)->GetValueToString());
     }
+
+    /////////////////////////////////////////////////////////////////////////////////
+    //CONTROL USAGE PART
+    digitalWrite(D[0], (int)controllium.GetDevice("Gpio 0")->GetDoubleValue());
+    digitalWrite(D[1], (int)controllium.GetDevice("Gpio 1")->GetDoubleValue());
+    digitalWrite(D[2], (int)controllium.GetDevice("Gpio 2")->GetDoubleValue());
+    digitalWrite(D[3], (int)controllium.GetDevice("Gpio 3")->GetDoubleValue());
+    digitalWrite(D[4], (int)controllium.GetDevice("Gpio 4")->GetDoubleValue());
+    digitalWrite(D[5], (int)controllium.GetDevice("Gpio 5")->GetDoubleValue());
+    digitalWrite(D[6], (int)controllium.GetDevice("Gpio 6")->GetDoubleValue());
+    digitalWrite(D[7], (int)controllium.GetDevice("Gpio 7")->GetDoubleValue());
+    digitalWrite(D[8], (int)controllium.GetDevice("Gpio 8")->GetDoubleValue());
   }
-
-  /////////////////////////////////////////////////////////////////////////////////
-  //CONTRO USAGE PART
-
-  //LED_0 BLINK
-  int Led0Index = controllium.GetDeviceIndexByName("LED_0");//RETURNS THE INDEX IF A DEVICE WITH THAT NAME EXISTS, -1 OTHERWISE
-  if(Led0Index >= 0)
-    controllium.GetDevice(Led0Index)->ToggleState();
-
-  //SWITCH_0 ON/OFF THE LEDS ANIMATION
-  int Switch0Index = controllium.GetDeviceIndexByName("SWITCH_0");//RETURNS THE INDEX IF A DEVICE WITH THAT NAME EXISTS, -1 OTHERWISE
-  if(Switch0Index >= 0)
-  {
-    if(controllium.GetDevice(Switch0Index)->GetDoubleValue() > 0)
-    {
-      for(int i = 0; i < 2; ++i)
-      {
-        digitalWrite(D[i], HIGH);
-        delay(20);
-        digitalWrite(D[i], LOW);
-        delay(20);
-      }
-    }
-  }
-
-
+  
 }

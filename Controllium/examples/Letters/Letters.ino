@@ -1,6 +1,6 @@
 /*************************************************************************************************************************
     DEVELOPED BY:   ARTUR FERREIRA MOREIRA
-    DATE:           FEBRUARY, 14 OF 2017
+    DATE:           MARCH, 28 OF 2017
     EMAIL:          artur31415926@gmail.com
     WEBPAGE:        http://asgardlab.netne.net/
     INSTAGRAM:      https://www.instagram.com/artur31415/
@@ -23,7 +23,7 @@ long lastTimeUIBlink = 0;
 
 int LedAnimationCounter = 1;
 
-Controllium controllium("Letters");
+Controllium controllium("Letters");//Name of this device, if you have more than one connected, provide a different name to each
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                              FUNCTIONS BEGIN                                                  /////
