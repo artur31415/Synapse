@@ -169,7 +169,7 @@ void loop()
 
 
   //TOGGLE THE STATE OF ALL LEDS
-  for(int i = 0; i < controllium.DeviceCount(); ++i)
+  for(int i = 0; i < controllium.NumberOfClients(); ++i)
   {
     controllium.GetDevice(i)->ToggleState();
   }
