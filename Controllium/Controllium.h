@@ -1,11 +1,14 @@
 /*************************************************************************************************************************
     DEVELOPED BY:   ARTUR FERREIRA MOREIRA
-    DATE:           MARCH, 28 OF 2017
+    DATE:           MAY, 13 OF 2017
     EMAIL:          artur31415926@gmail.com
-    WEBPAGE:        http://asgardlab.netne.net/
+    WEBPAGE:        http://daedalusstone.com/
     INSTAGRAM:      https://www.instagram.com/artur31415/
     GOOGLEPLAY:     https://play.google.com/store/apps/developer?id=Synapse
     YOUTUBE:        https://www.youtube.com/channel/UC6blOB30re0J-Oiksqaob1g/videos
+    GITHUB:         https://github.com/artur31415
+    TWITTER:        https://twitter.com/artur31415
+    LINKEDIN:       https://www.linkedin.com/in/artur31415
 **************************************************************************************************************************/
 
 
@@ -65,8 +68,11 @@ class Controllium
     bool Update(int updateDelay);
     void BeginUdpServer(unsigned int _port);
     //////////////////////////////////////////////
-    void ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]);
+    bool ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]);
     char* ProtocolEncrypt();
+
+
+
 
 
 

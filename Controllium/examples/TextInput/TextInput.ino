@@ -34,13 +34,15 @@
 
     Divirta-se!
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                      Leds                                                           //
+//                                                  TextInput                                                           //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 [ENG-USA]
-    In this example all leds on the controller, that are on the Controllium android app, blink at a interval of one second.
+    In this example a TextInput on the controller, that is on the Controllium Android app, is received by the ESP8266
+    and its data is printed on the serial monitor.
 
 [PT-BR]
-    Neste exemplo todos os leds do controle, que estão no aplicativo android Controllium, piscam no intervalo de um segundo
+    Neste exemplo um TextInput no controle, que está no aplicativo Android Controllium, é recebido pela ESP8266
+    e os dados recebidos são impressos no monitor serial.
 **************************************************************************************************************************/
 
 
@@ -62,10 +64,9 @@ int D[] = {16, 5, 4, 0, 2, 14, 12, 13, 15};
 //variable used to control the blinking of the "alive" led
 long ledBlinkLastTime = 0;
 
-long ledsLastTime = 0;
 
 //Controllium object
-Controllium controllium("ESP_Leds");//Name of this device, if you have more than one connected, provide a different name to each
+Controllium controllium("ESP_TextInput");//Name of this device, if you have more than one connected, provide a different name to each
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                        UTILS FUNCTIONS BEGIN                                                  /////
@@ -182,15 +183,9 @@ void setup()
   controllium.BeginUdpServer(UDP_DEFAULT_PORT);
 
   //Instantiate Controllium Devices and add them to the controllium object
-  ControlliumDevice led0("LED_0", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led1("LED_1", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led2("LED_2", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led3("LED_3", DEVICE_TYPE_LED, "0");
+  ControlliumDevice textInput("Terminal", DEVICE_TYPE_TEXT_INPUT, "empty");
 
-  controllium.AddDevice(led0);
-  controllium.AddDevice(led1);
-  controllium.AddDevice(led2);
-  controllium.AddDevice(led3);
+  controllium.AddDevice(textInput);
 
   Serial.println("Waiting for clients to connect...");
 }
@@ -207,17 +202,10 @@ void loop()
   if(controllium.Update(200))//Returns true if a new msg was received
   {
     Serial.println("New MSG!\n\n");
-  }
 
-
-  if(millis() - ledsLastTime >= 1000)
-  {
-    ledsLastTime = millis();
-    //TOGGLE THE STATE OF ALL LEDS
-    for(int i = 0; i < controllium.NumberOfDevices(); ++i)
-    {
-      controllium.GetDevice(i)->ToggleState();
-    }
+    String _textInputData = controllium.GetDevice("Terminal")->GetValueToString();
+    Serial.print("Terminal = ");
+    Serial.println(_textInputData);
   }
 
 }

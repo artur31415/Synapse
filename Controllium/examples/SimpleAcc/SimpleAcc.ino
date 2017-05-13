@@ -34,13 +34,13 @@
 
     Divirta-se!
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                      Leds                                                           //
+//                                                  SimpleAcc                                                           //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 [ENG-USA]
-    In this example all leds on the controller, that are on the Controllium android app, blink at a interval of one second.
+    In this example the reading of the Accelerometer sensor from the Android device is received and showed on the Serial Monitor.
 
 [PT-BR]
-    Neste exemplo todos os leds do controle, que estão no aplicativo android Controllium, piscam no intervalo de um segundo
+    Neste exemplo a leitura do sensor Acelerometro do dispositivo Android é recebido e mostrado no monitor serial.
 **************************************************************************************************************************/
 
 
@@ -62,10 +62,9 @@ int D[] = {16, 5, 4, 0, 2, 14, 12, 13, 15};
 //variable used to control the blinking of the "alive" led
 long ledBlinkLastTime = 0;
 
-long ledsLastTime = 0;
 
 //Controllium object
-Controllium controllium("ESP_Leds");//Name of this device, if you have more than one connected, provide a different name to each
+Controllium controllium("ESP_SimpleAcc");//Name of this device, if you have more than one connected, provide a different name to each
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                        UTILS FUNCTIONS BEGIN                                                  /////
@@ -182,15 +181,9 @@ void setup()
   controllium.BeginUdpServer(UDP_DEFAULT_PORT);
 
   //Instantiate Controllium Devices and add them to the controllium object
-  ControlliumDevice led0("LED_0", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led1("LED_1", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led2("LED_2", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led3("LED_3", DEVICE_TYPE_LED, "0");
+  ControlliumDevice accelerometer("Acc", DEVICE_TYPE_ACCELEROMETER, "no_data");
 
-  controllium.AddDevice(led0);
-  controllium.AddDevice(led1);
-  controllium.AddDevice(led2);
-  controllium.AddDevice(led3);
+  controllium.AddDevice(accelerometer);
 
   Serial.println("Waiting for clients to connect...");
 }
@@ -207,17 +200,24 @@ void loop()
   if(controllium.Update(200))//Returns true if a new msg was received
   {
     Serial.println("New MSG!\n\n");
-  }
 
+    //Gets the received data and show it on serial
 
-  if(millis() - ledsLastTime >= 1000)
-  {
-    ledsLastTime = millis();
-    //TOGGLE THE STATE OF ALL LEDS
-    for(int i = 0; i < controllium.NumberOfDevices(); ++i)
-    {
-      controllium.GetDevice(i)->ToggleState();
-    }
+    String _accX = controllium.GetDevice("Acc")->GetValueFromRaw(0);
+    String _accY = controllium.GetDevice("Acc")->GetValueFromRaw(1);
+    String _accZ = controllium.GetDevice("Acc")->GetValueFromRaw(2);
+
+    Serial.print("Acc Data= {\n_accX: ");
+    Serial.println(_accX);
+
+    Serial.print("_accY: ");
+    Serial.println(_accY);
+
+    Serial.print("_accZ: ");
+    Serial.println(_accZ);
+
+    Serial.println(" }\n\n");
+
   }
 
 }

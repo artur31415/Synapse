@@ -9,7 +9,7 @@
     GITHUB:         https://github.com/artur31415
     TWITTER:        https://twitter.com/artur31415
     LINKEDIN:       https://www.linkedin.com/in/artur31415
-
+    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 [ENG-USA]
       This library was developed to work with the Android app "Controllium", with which,
@@ -34,13 +34,13 @@
 
     Divirta-se!
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                      Leds                                                           //
+//                                                  SimpleGPS                                                           //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 [ENG-USA]
-    In this example all leds on the controller, that are on the Controllium android app, blink at a interval of one second.
+    In this example the reading of the GPS sensor from the Android device is received and showed on the Serial Monitor.
 
 [PT-BR]
-    Neste exemplo todos os leds do controle, que estão no aplicativo android Controllium, piscam no intervalo de um segundo
+    Neste exemplo a leitura do sensor GPS do dispositivo Android é recebido e mostrado no monitor serial.
 **************************************************************************************************************************/
 
 
@@ -62,10 +62,9 @@ int D[] = {16, 5, 4, 0, 2, 14, 12, 13, 15};
 //variable used to control the blinking of the "alive" led
 long ledBlinkLastTime = 0;
 
-long ledsLastTime = 0;
 
 //Controllium object
-Controllium controllium("ESP_Leds");//Name of this device, if you have more than one connected, provide a different name to each
+Controllium controllium("ESP_SimpleGPS");//Name of this device, if you have more than one connected, provide a different name to each
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                        UTILS FUNCTIONS BEGIN                                                  /////
@@ -182,15 +181,10 @@ void setup()
   controllium.BeginUdpServer(UDP_DEFAULT_PORT);
 
   //Instantiate Controllium Devices and add them to the controllium object
-  ControlliumDevice led0("LED_0", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led1("LED_1", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led2("LED_2", DEVICE_TYPE_LED, "0");
-  ControlliumDevice led3("LED_3", DEVICE_TYPE_LED, "0");
+  ControlliumDevice gps("GPS", DEVICE_TYPE_GPS, "no_data");
 
-  controllium.AddDevice(led0);
-  controllium.AddDevice(led1);
-  controllium.AddDevice(led2);
-  controllium.AddDevice(led3);
+  controllium.AddDevice(gps);
+
 
   Serial.println("Waiting for clients to connect...");
 }
@@ -204,20 +198,38 @@ void loop()
     blink(D[3]);
   }
 
+
   if(controllium.Update(200))//Returns true if a new msg was received
   {
     Serial.println("New MSG!\n\n");
+
+    //Gets the received data and show it on serial
+
+    String _lat = controllium.GetDevice("GPS")->GetValueFromRaw(0);
+    String _long = controllium.GetDevice("GPS")->GetValueFromRaw(1);
+    String _alti = controllium.GetDevice("GPS")->GetValueFromRaw(2);
+    String _accuracy = controllium.GetDevice("GPS")->GetValueFromRaw(3);
+    String _bearing = controllium.GetDevice("GPS")->GetValueFromRaw(4);
+    String _speed = controllium.GetDevice("GPS")->GetValueFromRaw(5);
+
+    Serial.print("GPS Data= {\nLat: ");
+    Serial.println(_lat);
+
+    Serial.print("Long: ");
+    Serial.println(_long);
+
+    Serial.print("Altitude: ");
+    Serial.println(_alti);
+
+    Serial.print("Accuracy: ");
+    Serial.println(_accuracy);
+
+    Serial.print("Bearing: ");
+    Serial.println(_bearing);
+
+    Serial.print("Speed: ");
+    Serial.println(_speed);
+
+    Serial.println(" }\n\n");
   }
-
-
-  if(millis() - ledsLastTime >= 1000)
-  {
-    ledsLastTime = millis();
-    //TOGGLE THE STATE OF ALL LEDS
-    for(int i = 0; i < controllium.NumberOfDevices(); ++i)
-    {
-      controllium.GetDevice(i)->ToggleState();
-    }
-  }
-
 }

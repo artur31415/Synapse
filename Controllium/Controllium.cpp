@@ -125,7 +125,7 @@ ControlliumDevice * Controllium::GetDevice(String _name)
   {
 	  return new ControlliumDevice("NULL");
   }
-  
+
 }
 
 int Controllium::NumberOfDevices()
@@ -290,14 +290,13 @@ bool Controllium::Update(int updateDelay)
 
   if (packetSize)
   {
-    isNewData = true;
     char UdpPacketBuffer[255];
     int PacketLength = UdpPort.read(UdpPacketBuffer, 255);
     if(PacketLength > 0)
       UdpPacketBuffer[PacketLength - 1] = 0;
 
 
-    ProtocolDecrypt(UdpPort.remoteIP(), UdpPacketBuffer);
+    isNewData = ProtocolDecrypt(UdpPort.remoteIP(), UdpPacketBuffer);
 
   }
 
@@ -346,22 +345,24 @@ void Controllium::BeginUdpServer(unsigned int _port)
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //                                     PROTOCOL FUNCTIONS                                       //
 //////////////////////////////////////////////////////////////////////////////////////////////////
-void Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255])
+bool Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255])
 {
   String data(_UdpPacketBuffer);
   LastReceived = data;
 
   if(data.indexOf("SCAN") >= 0)//SCAN EVENT
   {
-	String response = "SCAN_TRUEN;" + name + "N";
-    LastSended = response;
-	char* outData = new char[response.length()];
-	response.toCharArray(outData, response.length());
-	
-	
-    UdpPort.beginPacket(RemoteIp, UdpPort.localPort());
-    UdpPort.write(outData);
-    UdpPort.endPacket();
+	   String response = "SCAN_TRUEN;" + name + "N";
+     LastSended = response;
+	   char* outData = new char[response.length()];
+	   response.toCharArray(outData, response.length());
+
+
+     UdpPort.beginPacket(RemoteIp, UdpPort.localPort());
+     UdpPort.write(outData);
+     UdpPort.endPacket();
+
+     return false;
   }
   else if(data.indexOf("BEGIN") >= 0)//THIS IS A NEW CLIENT!
   {
@@ -375,6 +376,8 @@ void Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]
     {
       GetClientByIP(RemoteIp)->SetActive();//IT IS BACK TO ACTIVITY
     }
+
+    return false;
   }
   else if(data.indexOf("[") >= 0 && data.indexOf("]") >= 0)//NEW DATA PACKET FROM THE APP
   {
@@ -383,7 +386,7 @@ void Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]
     GetClientByIP(RemoteIp)->SetActive();//IT IS BACK TO ACTIVITY
 
     if(temp.indexOf("|") < 0)//NO VALID DATA TO PROCESS!
-      return;
+      return false;
 
     //DO SOMETHING WITH THE DATA!
     if(temp.indexOf(",") >= 0)//THEN THERE IS MORE THAN ONE OBJECT TO PROCESS
@@ -416,7 +419,8 @@ void Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]
     }
     else
     {
-      ControlliumDevice receivedDev = ControlliumDevice::FromString(temp);
+      String temp2 = temp.substring(temp.indexOf("[") + 1, temp.indexOf("]"));
+      ControlliumDevice receivedDev = ControlliumDevice::FromString(temp2);
       int receivedIndex = GetDeviceIndexByName(receivedDev.GetName());
       if(receivedIndex >= 0)//KNOWN DEVICE RECEIVED!
       {
@@ -424,7 +428,9 @@ void Controllium::ProtocolDecrypt(IPAddress RemoteIp, char _UdpPacketBuffer[255]
       }
     }
 
+    return true;
   }
+  return false;
 }
 
 char* Controllium::ProtocolEncrypt()
@@ -432,9 +438,9 @@ char* Controllium::ProtocolEncrypt()
   int numOfLeds = NumberOfDevicesByType(DEVICE_TYPE_LED);
   int numOfLabel = NumberOfDevicesByType(DEVICE_TYPE_LABEL);
   int numOfProgressbar = NumberOfDevicesByType(DEVICE_TYPE_PROGRESSBAR);
-  
+
   int countMax = numOfLeds + numOfLabel + numOfProgressbar;
-  
+
   String outStr = "[";
 
   for(int i = 0, count = 0; i < NumberOfDevices(); ++i)
@@ -442,10 +448,10 @@ char* Controllium::ProtocolEncrypt()
     if(GetDevice(i)->GetType().indexOf(DEVICE_TYPE_LED) >= 0 || GetDevice(i)->GetType().indexOf(DEVICE_TYPE_LABEL) >= 0 || GetDevice(i)->GetType().indexOf(DEVICE_TYPE_PROGRESSBAR) >= 0)
     {
       outStr += "[" +  GetDevice(i)->ToString() + "]";
-      
+
 	  if(count < (countMax) - 1)
         outStr += ",";
-	  
+
 	  ++count;
     }
   }
@@ -456,3 +462,5 @@ char* Controllium::ProtocolEncrypt()
 
   return outData;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////

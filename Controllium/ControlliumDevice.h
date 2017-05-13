@@ -1,11 +1,14 @@
 /*************************************************************************************************************************
-    DEVELOPED BY:   ARTUR FERREIRA MOREIRA
-    DATE:           MARCH, 28 OF 2017
-    EMAIL:          artur31415926@gmail.com
-    WEBPAGE:        http://asgardlab.netne.net/
-    INSTAGRAM:      https://www.instagram.com/artur31415/
-    GOOGLEPLAY:     https://play.google.com/store/apps/developer?id=Synapse
-    YOUTUBE:        https://www.youtube.com/channel/UC6blOB30re0J-Oiksqaob1g/videos
+DEVELOPED BY:   ARTUR FERREIRA MOREIRA
+DATE:           MAY, 13 OF 2017
+EMAIL:          artur31415926@gmail.com
+WEBPAGE:        http://daedalusstone.com/
+INSTAGRAM:      https://www.instagram.com/artur31415/
+GOOGLEPLAY:     https://play.google.com/store/apps/developer?id=Synapse
+YOUTUBE:        https://www.youtube.com/channel/UC6blOB30re0J-Oiksqaob1g/videos
+GITHUB:         https://github.com/artur31415
+TWITTER:        https://twitter.com/artur31415
+LINKEDIN:       https://www.linkedin.com/in/artur31415
 **************************************************************************************************************************/
 
 
@@ -14,17 +17,18 @@
 
 #include <Arduino.h>
 
-#define DEVICE_TYPE_BUTTON            		"B"
-#define DEVICE_TYPE_LED               		"L"
-#define DEVICE_TYPE_ACCELEROMETER     		"A"
-#define DEVICE_TYPE_SEEKBAR  				"S"
-#define DEVICE_TYPE_PROGRESSBAR  			"P"
-#define DEVICE_TYPE_ACCELEROMETER 			"A"
-#define DEVICE_TYPE_LABEL 					"E"
-#define DEVICE_TYPE_GSM 					"M"
-#define DEVICE_TYPE_GPS 					"G"
+#define DEVICE_TYPE_BUTTON            		  "B"
+#define DEVICE_TYPE_LED               		  "L"
+#define DEVICE_TYPE_ACCELEROMETER     		  "A"
+#define DEVICE_TYPE_SEEKBAR  				        "S"
+#define DEVICE_TYPE_PROGRESSBAR  			      "P"
+#define DEVICE_TYPE_ACCELEROMETER 			    "A"
+#define DEVICE_TYPE_LABEL 					        "E"
+#define DEVICE_TYPE_GSM 					          "M"
+#define DEVICE_TYPE_GPS 					          "G"
+#define DEVICE_TYPE_TEXT_INPUT 					    "T"
 
-#define PROTOCOL_SEPARATOR            "|"
+#define PROTOCOL_SEPARATOR                  "|"
 
 #define UNDEFINED_FIELD "UNDEFINED"
 
@@ -85,6 +89,11 @@ class ControlliumDevice
     //////////////////////////////////
     bool operator == (ControlliumDevice dev);
     bool operator != (ControlliumDevice dev);
+
+
+    /////////////////////////////////////////////////
+    String getValue(String data, char separator, int index);
+    String GetValueFromRaw(int index);
 
 };
 

@@ -1,33 +1,78 @@
 /*************************************************************************************************************************
     DEVELOPED BY:   ARTUR FERREIRA MOREIRA
-    DATE:           FEBRUARY, 14 OF 2017
+    DATE:           MAY, 13 OF 2017
     EMAIL:          artur31415926@gmail.com
-    WEBPAGE:        http://asgardlab.netne.net/
+    WEBPAGE:        http://daedalusstone.com/
     INSTAGRAM:      https://www.instagram.com/artur31415/
     GOOGLEPLAY:     https://play.google.com/store/apps/developer?id=Synapse
     YOUTUBE:        https://www.youtube.com/channel/UC6blOB30re0J-Oiksqaob1g/videos
+    GITHUB:         https://github.com/artur31415
+    TWITTER:        https://twitter.com/artur31415
+    LINKEDIN:       https://www.linkedin.com/in/artur31415
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[ENG-USA]
+      This library was developed to work with the Android app "Controllium", with which,
+    you can control your ESP8266 projects using your Android device.
+      Through the library you can attach any of the UI elements to the Arduino hardware pins
+    accordingly to theirs functionalities.
+      You can use widgets to send and receive data from the ESP8266 using you Android Device.
+      Look at the examples to understand how the library works.
+
+      Any Ideas or criticism, email me.
+
+    Have fun!
+[PT-BR]
+      Esta biblioteca foi desenvolvida para trabalhar com o aplicativo Android "Controllium", com o qual,
+    Você pode controlar seus projetos de ESP8266 usando seu dispositivo Android.
+      Através da biblioteca você pode anexar qualquer um dos elementos UI para os pinos de hardware arduino
+    De acordo com s  uas funcionalidades.
+      Voce pode usar widgets para enviar e receber dados do ESP8266 usando o seu dispositivo Android.
+    Veja os exemplos para entender como funciona a biblioteca.
+
+      Quaisquer idéias ou críticas, email me.
+
+    Divirta-se!
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                    Symbols                                                           //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+[ENG-USA]
+    In this example the symbol buttons, that are on the Controllium android app, are used on the ESP8266 to set its pins
+    states to the buttons states.
+
+[PT-BR]
+    Neste exemplo os botões de simbolos, que estão no aplicativo android Controllium, são usados na ESP8266 para definir
+    os estados de seus pinos de acordo com os estados dos botões.
 **************************************************************************************************************************/
+
 
 #include <Controllium.h>
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "YOUR_SSID";
-const char* pass = "YOUR_PASS";
+//Wifi SSID and Pass
+const char* ROUTER_SSID = "YOUR_SSID";
+const char* ROUTER_PASS = "YOUR_PASS";
+
+//Soft AP SSID and Pass
+char* SOFT_AP_SSID = "Controllium";
+char* SOFT_AP_PASS = "0123456789";
 
 //ESP8266 DIGITAL PINS
 int D[] = {16, 5, 4, 0, 2, 14, 12, 13, 15};
 
-long lastTime = 0;
-long lastTimeUIBlink = 0;
+//variable used to control the blinking of the "alive" led
+long ledBlinkLastTime = 0;
 
-int LedAnimationCounter = 1;
 
-Controllium controllium("Symbols");//Name of this device, if you have more than one connected, provide a different name to each
+//Controllium object
+Controllium controllium("ESP_Symbols");//Name of this device, if you have more than one connected, provide a different name to each
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////                                              FUNCTIONS BEGIN                                                  /////
+////                                        UTILS FUNCTIONS BEGIN                                                  /////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Jusy a function to blink a pin
 void blink(int pin)
 {
   for(int i = 0; i < 2; ++i)
@@ -41,29 +86,37 @@ void blink(int pin)
   digitalWrite(pin, LOW);
   delay(100);
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////                                              FUNCTIONS END                                                    /////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-void setup()
+//Setup Soft AP
+void setupAP()
 {
-  Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
 
-  for(int i = 0; i < 6; ++i)
-  {
-    pinMode(D[i], OUTPUT);
-    digitalWrite(D[i], LOW);
-  }
+  delay(100);
 
-   // setting up Station AP
-  WiFi.begin(ssid, pass);
+  randomSeed(analogRead(A0) + analogRead(A0));
+  sprintf(SOFT_AP_SSID, "%s_%04d", SOFT_AP_SSID, random(1023));
+
+  WiFi.softAP(SOFT_AP_SSID, SOFT_AP_PASS, 6);
+}
+
+//Try to connects to WIFI
+//If it fails, returns false
+//Otherwise, returns true
+bool connectToWifi()
+{
+  WiFi.begin(ROUTER_SSID, ROUTER_PASS);
 
   // Wait for connect to AP
   Serial.print("\n\nConnecting to ");
-  Serial.println(ssid);
+
+  Serial.println(ROUTER_SSID);
+
   int tries=0;
-  while (WiFi.status() != WL_CONNECTED) {
+
+  while (WiFi.status() != WL_CONNECTED)
+   {
     delay(500);
     Serial.print(".");
     tries++;
@@ -72,45 +125,64 @@ void setup()
       break;
     }
   }
+
   Serial.println();
 
   if (tries > 30)
   {
-    Serial.println("Failed To Connect!");
-    int animationDelay = 50;
-    while(1)
-    {
-      delay(200);
-
-      for(int i = 0; i < 5; ++i)
-      {
-        digitalWrite(D[i], HIGH);
-        delay(animationDelay);
-        digitalWrite(D[i], LOW);
-        delay(animationDelay);
-      }
-
-      delay(200);
-
-      for(int i = 4; i >= 0; --i)
-      {
-        digitalWrite(D[i], HIGH);
-        delay(animationDelay);
-        digitalWrite(D[i], LOW);
-        delay(animationDelay);
-      }
-    }
+    Serial.println("Failed To Connect, initializing the Soft AP!\n\n");
+    return false;
   }
 
+  return true;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////                                        UTILS FUNCTIONS BEGIN                                                  /////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  Serial.println("Connected!");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
-  Serial.print("Udp server started at port ");
+void setup()
+{
+  //Init the serial for debug
+  Serial.begin(115200);
+
+  //Init the ESP pins
+  for(int i = 0; i < 9; ++i)
+  {
+    pinMode(D[i], OUTPUT);
+    digitalWrite(D[i], LOW);
+  }
+
+  if(connectToWifi())//Try to connect to WIFI
+  {
+    Serial.println("Connected!");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.localIP());
+
+    digitalWrite(D[1], HIGH);// Pin to show that it is connected to wifi
+  }
+  else//Otherwise, setup a soft AP
+  {
+    setupAP();
+
+    Serial.println("Soft AP On!");
+
+    Serial.print("\nSSID = ");
+    Serial.println(SOFT_AP_SSID);
+    Serial.print("PASS = ");
+    Serial.println(SOFT_AP_PASS);
+
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.softAPIP());
+
+    digitalWrite(D[2], HIGH);// Pin to show that it is NOT connected to wifi
+  }
+
+  //Begin server
+  Serial.print("\nUdp server started at port ");
   Serial.println(UDP_DEFAULT_PORT);
-
   controllium.BeginUdpServer(UDP_DEFAULT_PORT);
 
+  //Instantiate Controllium Devices and add them to the controllium object
   ControlliumDevice symbolLight("SYMBOL_LIGHT_0", DEVICE_TYPE_BUTTON, "0");
   ControlliumDevice symbolOk("SYMBOL_OK_0", DEVICE_TYPE_BUTTON, "0");
   ControlliumDevice symbolClose("SYMBOL_CLOSE_0", DEVICE_TYPE_BUTTON, "0");
@@ -120,68 +192,42 @@ void setup()
   controllium.AddDevice(symbolOk);
   controllium.AddDevice(symbolClose);
   controllium.AddDevice(symbolConfig);
+
+  Serial.println("Waiting for clients to connect...");
 }
 
 void loop()
 {
-  if(millis() - lastTime > 2000)
+  //Just a blinking led to show that the device is alive
+  if(millis() - ledBlinkLastTime > 2000)
   {
-    lastTime = millis();
-
-    digitalWrite(D[5], LOW);
-    blink(D[5]);
-
-    Serial.print("ClientsCount = ");
-    Serial.print(controllium.NumberOfClients());
-    Serial.println("\n");
-
-    if(controllium.NumberOfClients() > 0)
-    {
-      for(int i = 0; i < controllium.NumberOfClients(); ++i)
-      {
-        Serial.print("CLIENT ");
-        Serial.print(i);
-        Serial.print(">\t\tIP = {");
-        Serial.print(controllium.GetClient(i)->GetIp());
-        Serial.print("}\t\t\tIsTimeOut = ");
-        Serial.println(controllium.GetClient(i)->IsTimeOut());
-      }
-    }
-    Serial.println("=======================================\n");
-
+    ledBlinkLastTime = millis();
+    blink(D[3]);
   }
 
-  if(controllium.Update(200))
-  {
-    Serial.print("DeviceCount = ");
-    Serial.println(controllium.NumberOfDevices());
 
-    for(int i = 0; i < controllium.NumberOfDevices(); ++i)
-    {
-      Serial.print("DEVICE ");
-      Serial.print(i);
-      Serial.print(":\t\t");
-      Serial.print(controllium.GetDevice(i)->GetName());
-      Serial.print("\t\tValue = ");
-      Serial.print(controllium.GetDevice(i)->GetValueToString());
-    }
+  if(controllium.Update(200))//Returns true if a new msg was received
+  {
+    Serial.println("New MSG!\n\n");
+
+
+    //Symbols to pins
+    float symbolLightValue = (float)controllium.GetDevice(0)->GetDoubleValue();
+    float symbolOkValue = (float)controllium.GetDevice(1)->GetDoubleValue();
+    float symbolCloseValue = (float)controllium.GetDevice(2)->GetDoubleValue();
+    float symbolConfigValue = (float)controllium.GetDevice(3)->GetDoubleValue();
+
+    if(symbolLightValue >= 0)
+      digitalWrite(D[4], (int)symbolLightValue);
+
+    if(symbolOkValue >= 0)
+      digitalWrite(D[5], (int)symbolOkValue);
+
+    if(symbolCloseValue >= 0)
+      digitalWrite(D[6], (int)symbolCloseValue);
+
+    if(symbolConfigValue >= 0)
+      digitalWrite(D[7], (int)symbolConfigValue);
   }
 
-//Numbers TO pin
-  float symbolLightValue = (float)controllium.GetDevice(0)->GetDoubleValue();
-  float symbolOkValue = (float)controllium.GetDevice(1)->GetDoubleValue();
-  float symbolCloseValue = (float)controllium.GetDevice(2)->GetDoubleValue();
-  float symbolConfigValue = (float)controllium.GetDevice(3)->GetDoubleValue();
-
-  if(symbolLightValue >= 0)
-    digitalWrite(D[0], (int)symbolLightValue);
-
-  if(symbolOkValue >= 0)
-    digitalWrite(D[1], (int)symbolOkValue);
-
-  if(symbolCloseValue >= 0)
-    digitalWrite(D[2], (int)symbolCloseValue);
-
-  if(symbolConfigValue >= 0)
-    digitalWrite(D[3], (int)symbolConfigValue);
 }
